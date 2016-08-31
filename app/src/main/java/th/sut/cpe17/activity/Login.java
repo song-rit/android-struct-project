@@ -1,6 +1,8 @@
 package th.sut.cpe17.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import th.sut.cpe17.R;
 import th.sut.cpe17.constant.Constant;
 import th.sut.cpe17.model.LoginModel;
+import th.sut.cpe17.session.SessionManager;
 import th.sut.cpe17.util.OkHttpRequest;
 
 public class Login extends AppCompatActivity {
@@ -62,11 +65,11 @@ public class Login extends AppCompatActivity {
                         public void run() {
                             super.run();
                             try {
-                                responseString.append(httpRequest.HTTPGet(Constant.URL_LOGIN));
+                                responseString.append(httpRequest.HTTPGet(Constant.URL.LOGIN));
                                 Gson gson = new Gson();
                                 LoginModel login = gson.fromJson(responseString.toString(), LoginModel.class);
 
-                                checkLogIn(login.getStatus(), login.getUserName(), login.getPassWord());
+                                checkLogIn(login);
 
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -79,9 +82,13 @@ public class Login extends AppCompatActivity {
         };
     }
 
-    private void checkLogIn(Boolean status, String userName, String passWord) {
+    private void checkLogIn(LoginModel login) {
         progressDialog.dismiss();
-        if (status && userName.equals(this.userName) && passWord.equals(this.passWord)) {
+        //Check null string
+        if (login.getStatus() && login.getUserName().equals(this.userName) && login.getPassWord().equals(this.passWord)) {
+
+            SessionManager.getInstance(this);
+            SessionManager.setSession(login);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

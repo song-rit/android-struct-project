@@ -1,8 +1,5 @@
 package th.sut.cpe17.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;

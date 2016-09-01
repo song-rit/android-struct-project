@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import th.sut.cpe17.activity.Login;
+import th.sut.cpe17.activity.MainActivity;
 import th.sut.cpe17.constant.Constant;
 import th.sut.cpe17.model.LoginModel;
 
@@ -48,19 +49,34 @@ public class SessionManager {
 
     public boolean checkLoginValidate() {
 
-        if (!isLoggedIn()){
-            startActivityLogin();
+        if (!isLoggedIn())
             return false;
-        }
-        return true;
+        else
+            return true;
     }
 
-    private void startActivityLogin() {
+    public void startLoginActivity() {
         Intent intent = new Intent(context, Login.class);
 
         // Closing all the Activities
         // Add new Flag to start new Activity
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        // Set no animation while open activity
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+        context.startActivity(intent);
+    }
+
+    public void startMainActivity() {
+        Intent intent = new Intent(context, MainActivity.class);
+
+        // Closing all the Activities
+        // Add new Flag to start new Activity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        // Set no animation while open activity
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
         context.startActivity(intent);
     }
@@ -83,6 +99,7 @@ public class SessionManager {
     public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(Constant.SHARE_PREFERENCE_KEY.IS_LOGIN, false);
     }
+
     public String getUserName() {
         return sharedPreferences.getString(Constant.SHARE_PREFERENCE_KEY.USER_NAME, "");
     }

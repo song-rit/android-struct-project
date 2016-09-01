@@ -16,7 +16,7 @@ public class SplashScreen extends AppCompatActivity {
     private Handler handler;
     private Runnable runnable;
     private long delay_time;
-    private long time = 2000L;
+    private long time = 1800;
     private SessionManager session;
     private boolean loginStatus = false;
 
@@ -30,49 +30,41 @@ public class SplashScreen extends AppCompatActivity {
             session.setSharedPreferences(getApplicationContext());
         }
 
+        // Get login status
         loginStatus = session.checkLoginValidate();
 
-        if (loginStatus) {
-            session.startMainActivity();
-            finish();
-        } else {
-
-            handler = new Handler();
-            runnable = new Runnable() {
-                @Override
-                public void run() {
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (loginStatus) {
+                    session.startMainActivity();
+                } else {
                     session.startLoginActivity();
-                    finish();
                 }
-            };
-        }
-
+                finish();
+            }
+        };
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (!loginStatus) {
-            delay_time = time;
-            handler.postDelayed(runnable, delay_time);
-            time = System.currentTimeMillis();
-        }
+        delay_time = time;
+        handler.postDelayed(runnable, delay_time);
+        time = System.currentTimeMillis();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (!loginStatus) {
-            handler.removeCallbacks(runnable);
-            time = delay_time - (System.currentTimeMillis() - time);
-        }
+        handler.removeCallbacks(runnable);
+        time = delay_time - (System.currentTimeMillis() - time);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (!loginStatus) {
-            handler.removeCallbacks(runnable);
-        }
+        handler.removeCallbacks(runnable);
     }
 }

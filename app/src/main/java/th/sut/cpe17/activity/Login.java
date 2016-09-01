@@ -1,8 +1,7 @@
 package th.sut.cpe17.activity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -19,6 +18,10 @@ import th.sut.cpe17.constant.Constant;
 import th.sut.cpe17.model.LoginModel;
 import th.sut.cpe17.session.SessionManager;
 import th.sut.cpe17.util.OkHttpRequest;
+
+/**
+ * Created by Song-rit Maleerat on 31/8/2559.
+ */
 
 public class Login extends AppCompatActivity {
 
@@ -40,22 +43,37 @@ public class Login extends AppCompatActivity {
 
         infixView();
 
+        // Set Username and Password
         editTextUserName.setText("test");
         editTextPassWord.setText("1234");
 
         buttonSignIn.setOnClickListener(buttonSignInListener());
     }
 
+    private View.OnClickListener newActivity() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        };
+    }
 
     private View.OnClickListener buttonSignInListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                // Get username and password from EditText
                 userName = editTextUserName.getText().toString();
                 passWord = editTextPassWord.getText().toString();
+
+                // Declare variable for keep service response
                 final StringBuffer responseString = new StringBuffer("");
 
+                // Check null string
                 if (userName.length() == 0 || passWord.length() == 0) {
                     Toast.makeText(Login.this, "Please fill in complete data", Toast.LENGTH_SHORT).show();
                 } else {
@@ -67,8 +85,9 @@ public class Login extends AppCompatActivity {
                             try {
                                 responseString.append(httpRequest.HTTPGet(Constant.URL.LOGIN));
                                 Gson gson = new Gson();
-                                LoginModel login = gson.fromJson(responseString.toString(), LoginModel.class);
 
+                                //Map json to login model
+                                LoginModel login = gson.fromJson(responseString.toString(), LoginModel.class);
                                 checkLogIn(login);
 
                             } catch (IOException e) {
@@ -84,17 +103,30 @@ public class Login extends AppCompatActivity {
 
     private void checkLogIn(LoginModel login) {
         progressDialog.dismiss();
-        //Check null string
+
         if (login.getStatus() && login.getUserName().equals(this.userName) && login.getPassWord().equals(this.passWord)) {
 
-            SessionManager.getInstance(this);
-            SessionManager.setSession(login);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Login.this, "Login Success", Toast.LENGTH_SHORT).show();
-                }
-            });
+            SessionManager session = SessionManager.getInstance();
+            if (session.getSharedPreferences() == null) {
+                session.setSharedPreferences(Login.this);
+            }
+            session.setSession(login);
+            if (session.checkLoginValidate()) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Login.this, "Login Success", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                startActivityMain();
+            }
+
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         } else {
             runOnUiThread(new Runnable() {
                 @Override
@@ -117,5 +149,18 @@ public class Login extends AppCompatActivity {
         buttonSignIn = (Button) findViewById(R.id.button_sign_in);
         editTextPassWord = (EditText) findViewById(R.id.edit_text_password);
         editTextUserName = (EditText) findViewById(R.id.edit_text_username);
+    }
+
+    private void startActivityMain() {
+        Intent intent = new Intent(Login.this, MainActivity.class);
+
+        // Closing all the Activities
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        // Add new Flag to start new Activity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(intent);
+        finish();
     }
 }

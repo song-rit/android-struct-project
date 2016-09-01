@@ -6,6 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import th.sut.cpe17.R;
+import th.sut.cpe17.session.SessionManager;
+
+/**
+ * Created by Song-rit Maleerat on 31/8/2559.
+ */
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -23,12 +28,17 @@ public class SplashScreen extends AppCompatActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
-
-                //Open login activity
-                Intent intent = new Intent(SplashScreen.this, Login.class);
+                SessionManager session = SessionManager.getInstance();
+                if (session.getSharedPreferences() == null) {
+                    session.setSharedPreferences(getApplicationContext());
+                }
+                Intent intent;
+                if (session.checkLoginValidate()) {
+                    intent = new Intent(SplashScreen.this, MainActivity.class);
+                } else {
+                    intent = new Intent(SplashScreen.this, Login.class);
+                }
                 startActivity(intent);
-
-                //close this activity
                 finish();
             }
         };

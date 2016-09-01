@@ -33,7 +33,7 @@ public class Login extends AppCompatActivity {
     private String userName;
     private String passWord;
 
-    OkHttpRequest httpRequest = new OkHttpRequest();
+    private OkHttpRequest httpRequest = new OkHttpRequest();
 
 
     @Override
@@ -88,6 +88,8 @@ public class Login extends AppCompatActivity {
 
                                 //Map json to login model
                                 LoginModel login = gson.fromJson(responseString.toString(), LoginModel.class);
+
+                                // Validate username and password
                                 checkLogIn(login);
 
                             } catch (IOException e) {
@@ -102,38 +104,27 @@ public class Login extends AppCompatActivity {
     }
 
     private void checkLogIn(LoginModel login) {
+
         progressDialog.dismiss();
 
+        // Validate status , username, password
         if (login.getStatus() && login.getUserName().equals(this.userName) && login.getPassWord().equals(this.passWord)) {
 
+            // Call instance login session
             SessionManager session = SessionManager.getInstance();
             if (session.getSharedPreferences() == null) {
                 session.setSharedPreferences(Login.this);
             }
+            // Setting session data
             session.setSession(login);
+
             if (session.checkLoginValidate()) {
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Login.this, "Login Success", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                startActivityMain();
+                toastShowText("Login Success");
+                session.startMainActivity();
+                finish();
             }
-
-
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
         } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Login.this, "Login Fail", Toast.LENGTH_SHORT).show();
-                }
-            });
+           toastShowText("Login Fail !");
         }
     }
 
@@ -151,14 +142,12 @@ public class Login extends AppCompatActivity {
         editTextUserName = (EditText) findViewById(R.id.edit_text_username);
     }
 
-    private void startActivityMain() {
-        Intent intent = new Intent(Login.this, MainActivity.class);
-
-        // Closing all the Activities
-        // Add new Flag to start new Activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        startActivity(intent);
-        finish();
+    private void toastShowText(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(Login.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

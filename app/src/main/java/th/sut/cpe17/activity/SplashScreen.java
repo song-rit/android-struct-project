@@ -18,30 +18,51 @@ public class SplashScreen extends AppCompatActivity {
     private Runnable runnable;
     private long delay_time;
     private long time = 3000L;
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        session = SessionManager.getInstance();
+        if (session.getSharedPreferences() == null) {
+            session.setSharedPreferences(getApplicationContext());
+        }
+        
+        if (session.checkLoginValidate()) {
+            startActivityMain();
+        }
+
         handler = new Handler();
         runnable = new Runnable() {
             @Override
             public void run() {
-                SessionManager session = SessionManager.getInstance();
+
+                 session = SessionManager.getInstance();
                 if (session.getSharedPreferences() == null) {
                     session.setSharedPreferences(getApplicationContext());
                 }
-                Intent intent;
-                if (session.checkLoginValidate()) {
-                    intent = new Intent(SplashScreen.this, MainActivity.class);
-                } else {
-                    intent = new Intent(SplashScreen.this, Login.class);
-                }
-                startActivity(intent);
-                finish();
+                session.checkLoginValidate();
+
             }
         };
+    }
+
+    private void startActivityMain() {
+        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+
+        // Closing all the Activities
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        // Add new Flag to start new Activity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(intent);
+
+        // Call this to finish the current activity
+        finish();
     }
 
     @Override

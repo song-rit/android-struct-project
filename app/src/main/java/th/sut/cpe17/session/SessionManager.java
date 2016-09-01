@@ -59,10 +59,8 @@ public class SessionManager {
         Intent intent = new Intent(context, Login.class);
 
         // Closing all the Activities
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         // Add new Flag to start new Activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         context.startActivity(intent);
     }

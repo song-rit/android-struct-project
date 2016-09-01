@@ -1,6 +1,5 @@
 package th.sut.cpe17.activity;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,8 +16,9 @@ public class SplashScreen extends AppCompatActivity {
     private Handler handler;
     private Runnable runnable;
     private long delay_time;
-    private long time = 3000L;
+    private long time = 2000L;
     private SessionManager session;
+    private boolean loginStatus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,60 +29,50 @@ public class SplashScreen extends AppCompatActivity {
         if (session.getSharedPreferences() == null) {
             session.setSharedPreferences(getApplicationContext());
         }
-        
-        if (session.checkLoginValidate()) {
-            startActivityMain();
+
+        loginStatus = session.checkLoginValidate();
+
+        if (loginStatus) {
+            session.startMainActivity();
+            finish();
+        } else {
+
+            handler = new Handler();
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    session.startLoginActivity();
+                    finish();
+                }
+            };
         }
 
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                 session = SessionManager.getInstance();
-                if (session.getSharedPreferences() == null) {
-                    session.setSharedPreferences(getApplicationContext());
-                }
-                session.checkLoginValidate();
-
-            }
-        };
-    }
-
-    private void startActivityMain() {
-        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-
-        // Closing all the Activities
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        // Add new Flag to start new Activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        startActivity(intent);
-
-        // Call this to finish the current activity
-        finish();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        delay_time = time;
-        handler.postDelayed(runnable, delay_time);
-        time = System.currentTimeMillis();
+        if (!loginStatus) {
+            delay_time = time;
+            handler.postDelayed(runnable, delay_time);
+            time = System.currentTimeMillis();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable);
-        time = delay_time - (System.currentTimeMillis() - time);
+        if (!loginStatus) {
+            handler.removeCallbacks(runnable);
+            time = delay_time - (System.currentTimeMillis() - time);
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        handler.removeCallbacks(runnable);
+        if (!loginStatus) {
+            handler.removeCallbacks(runnable);
+        }
     }
 }

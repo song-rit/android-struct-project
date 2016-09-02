@@ -1,8 +1,9 @@
 package th.sut.cpe17.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -12,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import th.sut.cpe17.R;
@@ -23,6 +26,9 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private LinearLayout signOut;
 
+    private ActionBar actionBar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,8 +36,12 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Customize the ActionBar
+      initActionBar();
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         signOut = (LinearLayout) findViewById(R.id.sign_out);
+
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,8 +58,34 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View navHeaderView = navigationView.getHeaderView(0);
+
+        Bitmap bm = BitmapFactory.decodeResource(getResources(),
+                R.drawable.user);
+
+        ImageView mImage = (ImageView) navHeaderView.findViewById(R.id.image_profile);
+        mImage.setImageBitmap(bm);
+
+    }
+
+    private void initActionBar() {
+        actionBar = getSupportActionBar();
+        View viewActionBar = getLayoutInflater().inflate(R.layout.toolbar, null);
+
+        // Set center TextView in the ActionBar
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+                ActionBar.LayoutParams.WRAP_CONTENT,
+                ActionBar.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        TextView textViewTitle = (TextView) viewActionBar.findViewById(R.id.text_view_title_actionbar);
+        textViewTitle.setText("MainActivity");
+        actionBar.setCustomView(viewActionBar, params);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
     }
 
     @Override

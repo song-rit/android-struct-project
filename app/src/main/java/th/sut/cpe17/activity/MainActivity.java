@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import th.sut.cpe17.R;
 import th.sut.cpe17.session.SessionManager;
@@ -19,6 +21,7 @@ import th.sut.cpe17.session.SessionManager;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
+    private LinearLayout signOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,17 +30,24 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        signOut = (LinearLayout) findViewById(R.id.sign_out);
+        signOut.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+
+                Toast.makeText(MainActivity.this, "Sign Out Success", Toast.LENGTH_SHORT).show();
+                drawer.closeDrawer(GravityCompat.END);
+                SessionManager session = new SessionManager();
+
+                if (session == null) {
+                    session.setSharedPreferences(getApplicationContext());
+                }
+                session.logOut();
+                finish();
+
             }
         });
-
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -92,13 +102,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.log_out) {
-            SessionManager session = SessionManager.getInstance();
-            if (session == null) {
-                session.setSharedPreferences(this);
-            }
-            session.logOut();
-            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -9,5 +9,10 @@
     <color name="colorWhite">#fff</color>
     <color name="colorGrey">#f1f1f1</color>
     <color name="colorGreyDark">#cecece</color>
+    <color name="colorRedDark">#ec0915</color>
+    <color name="colorRed">#ea3741</color>
+    <color name="colorRedLight">#ef404c</color>
+
+
 
 </resources>

@@ -3,31 +3,40 @@ package th.sut.cpe17.activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.view.Gravity;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import th.sut.cpe17.R;
+import th.sut.cpe17.fragment.HomeFragment;
+import th.sut.cpe17.fragment.SettingFragment;
 import th.sut.cpe17.session.SessionManager;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
     private LinearLayout signOut;
+    private SessionManager session;
+
+    private NavigationView navigationView;
 
     private ActionBar actionBar;
 
+    private FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +46,57 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         //Customize the ActionBar
-      initActionBar();
+        initActionBar();
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        signOut = (LinearLayout) findViewById(R.id.sign_out);
+        infixView();
 
-        signOut.setOnClickListener(new View.OnClickListener() {
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Get session
+        session = SessionManager.getInstance();
+        if (session == null) {
+            session.setSharedPreferences(getApplicationContext());
+        }
+
+        // Sign Out Event
+        signOut.setOnClickListener(signOutListener());
+
+        // Init value on NavigationDrawable
+        initValueUser();
+
+
+    }
+
+    private void initValueUser() {
+
+        // Get view from "nav_header_main.xml"
+        View navHeaderView = navigationView.getHeaderView(0);
+
+        // Set image profile
+        Bitmap bm = BitmapFactory.decodeResource(getResources(),
+                R.drawable.user);
+        ImageView mImage = (ImageView) navHeaderView.findViewById(R.id.image_profile);
+        mImage.setImageBitmap(bm);
+
+        // Set profile name
+        TextView textViewProfileName = (TextView) navHeaderView.findViewById(R.id.text_view_profile_name);
+        textViewProfileName.setText(session.getName() + " " + session.getLastName());
+
+        // Set profile email
+        TextView textViewProfileEmail = (TextView) navHeaderView.findViewById(R.id.text_view_profile_email);
+        textViewProfileEmail.setText(session.getEmail());
+
+        // Open HomeFragment
+        HomeFragment homeFragment = HomeFragment.newInstance();
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout_main, homeFragment);
+        fragmentTransaction.commit();
+    }
+
+    private View.OnClickListener signOutListener() {
+
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -50,25 +104,17 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.END);
                 SessionManager session = new SessionManager();
 
-                if (session == null) {
-                    session.setSharedPreferences(getApplicationContext());
-                }
+                // Sign Out
                 session.logOut();
                 finish();
-
             }
-        });
+        };
+    }
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        View navHeaderView = navigationView.getHeaderView(0);
-
-        Bitmap bm = BitmapFactory.decodeResource(getResources(),
-                R.drawable.user);
-
-        ImageView mImage = (ImageView) navHeaderView.findViewById(R.id.image_profile);
-        mImage.setImageBitmap(bm);
+    private void infixView() {
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        signOut = (LinearLayout) findViewById(R.id.sign_out);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
     }
 
@@ -130,14 +176,19 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_home) {
+            HomeFragment homeFragment = HomeFragment.newInstance();
+            fragmentManager = getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout_main, homeFragment);
+            fragmentTransaction.commit();
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.setting) {
+            SettingFragment  settingFragment = SettingFragment.newInstance();
+            fragmentManager = getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout_main, settingFragment);
+            fragmentTransaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

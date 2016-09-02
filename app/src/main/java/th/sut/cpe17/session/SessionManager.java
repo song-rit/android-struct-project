@@ -28,6 +28,7 @@ public class SessionManager {
         editor.putString(Constant.SHARE_PREFERENCE_KEY.LAST_NAME, login.getData().getLastName());
         editor.putString(Constant.SHARE_PREFERENCE_KEY.UNIVERSITY, login.getData().getUniversity());
         editor.putString(Constant.SHARE_PREFERENCE_KEY.MAJOR, login.getData().getMajor());
+        editor.putString(Constant.SHARE_PREFERENCE_KEY.EMAIL, login.getData().getEmail());
 
         // Commit changes
         editor.commit();
@@ -118,5 +119,9 @@ public class SessionManager {
 
     public String getUniversity() {
         return sharedPreferences.getString(Constant.SHARE_PREFERENCE_KEY.UNIVERSITY, "");
+    }
+
+    public String getEmail() {
+        return sharedPreferences.getString(Constant.SHARE_PREFERENCE_KEY.EMAIL, "");
     }
 }

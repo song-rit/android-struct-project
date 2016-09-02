@@ -11,4 +11,5 @@ public class SharePreferenceKey {
     public static final String LAST_NAME = "last_name";
     public static final String MAJOR = "major";
     public static final String UNIVERSITY = "university";
+    public static final String EMAIL = "email";
 }

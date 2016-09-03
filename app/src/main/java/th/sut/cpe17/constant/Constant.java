@@ -1,5 +1,6 @@
 package th.sut.cpe17.constant;
 
+import th.sut.cpe17.constant.constants.BannerSlideConfig;
 import th.sut.cpe17.constant.constants.SharePreferenceKey;
 import th.sut.cpe17.constant.constants.Url;
 
@@ -10,5 +11,7 @@ public class Constant {
 
     public static Url URL = new Url();
     public static SharePreferenceKey SHARE_PREFERENCE_KEY = new SharePreferenceKey();
+    public static BannerSlideConfig BANNER_SLIDE = new BannerSlideConfig();
+
 
 }

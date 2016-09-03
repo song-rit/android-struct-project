@@ -1,7 +1,6 @@
 package th.sut.cpe17.fragment;
 
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import th.sut.cpe17.R;
  * A simple {@link Fragment} subclass.
  * Use the {@link BannerSlideFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class BannerSlideFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -26,6 +24,10 @@ public class BannerSlideFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
+    public BannerSlideFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -44,9 +46,6 @@ public class BannerSlideFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    public BannerSlideFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,5 +62,4 @@ public class BannerSlideFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_banner_slide, container, false);
     }
-
 }

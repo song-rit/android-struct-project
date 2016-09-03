@@ -3,14 +3,18 @@ package th.sut.cpe17.activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +27,7 @@ import android.widget.Toast;
 import th.sut.cpe17.R;
 import th.sut.cpe17.fragment.HomeFragment;
 import th.sut.cpe17.fragment.SettingFragment;
+import th.sut.cpe17.model.ImageModel;
 import th.sut.cpe17.session.SessionManager;
 
 public class MainActivity extends AppCompatActivity
@@ -36,7 +41,18 @@ public class MainActivity extends AppCompatActivity
     private ActionBar actionBar;
 
     private FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
+    private FragmentTransaction fragmentTransaction;
+
+    private ViewPager pager;
+
+    private ImageModel imageModel;
+
+    private Handler handler;
+    private Runnable animateViewPager;
+
+    private boolean stopSliding = false;
+
+    int idNavMenu = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +80,11 @@ public class MainActivity extends AppCompatActivity
         // Init value on NavigationDrawable
         initValueUser();
 
+        // Show banner slide
+        showBannerSlide();
+    }
+
+    private void showBannerSlide() {
 
     }
 
@@ -115,6 +136,7 @@ public class MainActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         signOut = (LinearLayout) findViewById(R.id.sign_out);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        pager = (ViewPager) findViewById(R.id.view_pager_home_banner_slide);
 
     }
 
@@ -176,20 +198,32 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        Log.d("ItmeId", String.valueOf(id));
+        Log.d("idNavMenu", String.valueOf(idNavMenu));
+
         if (id == R.id.nav_home) {
-            HomeFragment homeFragment = HomeFragment.newInstance();
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout_main, homeFragment);
-            fragmentTransaction.commit();
+
+            if (idNavMenu != id && idNavMenu != 0) {
+                HomeFragment homeFragment = HomeFragment.newInstance();
+                fragmentManager = getSupportFragmentManager();
+                fragmentManager.popBackStack();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout_main, homeFragment);
+                fragmentTransaction.commit();
+            }
 
         } else if (id == R.id.setting) {
-            SettingFragment  settingFragment = SettingFragment.newInstance();
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout_main, settingFragment);
-            fragmentTransaction.commit();
+            if (idNavMenu != id) {
+                SettingFragment settingFragment = SettingFragment.newInstance();
+                fragmentManager = getSupportFragmentManager();
+                fragmentManager.popBackStack();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout_main, settingFragment);
+                fragmentTransaction.commit();
+            }
         }
+
+        idNavMenu = id;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.END);

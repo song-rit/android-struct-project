@@ -1,13 +1,14 @@
 package th.sut.cpe17.adapter;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.MediaRouteButton;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -36,7 +37,6 @@ public class BannerSlidePagerAdapter extends PagerAdapter{
     ImageLoader imageLoader = ImageLoader.getInstance();
     DisplayImageOptions options;
     ImageLoadingListener imageListener;
-
     LayoutInflater inflater;
 
     public BannerSlidePagerAdapter(Activity activity, ArrayList<ProductModel> productModels) {
@@ -45,6 +45,7 @@ public class BannerSlidePagerAdapter extends PagerAdapter{
 
         imageListener = new ImageDisplayListener();
         imageLoader.init(ImageLoaderConfiguration.createDefault(activity.getApplicationContext()));
+        options = new DisplayImageOptions.Builder().cacheInMemory().build();
     }
 
     @Override
@@ -53,8 +54,7 @@ public class BannerSlidePagerAdapter extends PagerAdapter{
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.fragment_banner_slide, container, false);
 
-        ImageView image = (ImageView) view.findViewById(R.id.image_view_slide);
-        image.setImageResource(R.mipmap.ic_launcher);
+        ImageView image = (ImageView) view.findViewById(R.id.image_view_banner_slide);
         imageLoader.displayImage((productModels.get(position)).getImageUrl(), image, options, imageListener);
         container.addView(view);
 
@@ -82,11 +82,11 @@ public class BannerSlidePagerAdapter extends PagerAdapter{
 
         static final List<String> displayedImages = Collections
                 .synchronizedList(new LinkedList<String>());
-
         @Override
         public void onLoadingComplete(String imageUri, View view,
                                       Bitmap loadedImage) {
             if (loadedImage != null) {
+                view.setVisibility(View.VISIBLE);
                 ImageView imageView = (ImageView) view;
                 boolean firstDisplay = !displayedImages.contains(imageUri);
                 if (firstDisplay) {
@@ -95,5 +95,6 @@ public class BannerSlidePagerAdapter extends PagerAdapter{
                 }
             }
         }
+
     }
 }

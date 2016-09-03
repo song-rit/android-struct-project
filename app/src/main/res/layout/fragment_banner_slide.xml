@@ -5,7 +5,9 @@
     tools:context="th.sut.cpe17.fragment.BannerSlideFragment">
 
     <ImageView
-        android:id="@+id/image_view_slide"
+        android:visibility="gone"
+        android:id="@+id/image_view_banner_slide"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </FrameLayout>

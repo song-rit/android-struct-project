@@ -22,7 +22,9 @@ import th.sut.cpe17.adapter.BannerSlidePagerAdapter;
 import th.sut.cpe17.constant.Constant;
 import th.sut.cpe17.model.ImageModel;
 import th.sut.cpe17.util.CheckNetworkConnection;
+import th.sut.cpe17.util.CirclePageIndicator;
 import th.sut.cpe17.util.OkHttpRequest;
+import th.sut.cpe17.util.PageIndicator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +42,8 @@ public class HomeFragment extends Fragment {
     private Handler handler;
     private Runnable animateViewPager;
     private boolean stopSliding = false;
+    private PageIndicator indicator;
+
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -71,6 +75,8 @@ public class HomeFragment extends Fragment {
 
     private void infixView(View view) {
         pager = (ViewPager) view.findViewById(R.id.view_pager_home_banner_slide);
+        indicator = (CirclePageIndicator) view.findViewById(R.id.indicator_home);
+
     }
 
     @Override
@@ -108,6 +114,7 @@ public class HomeFragment extends Fragment {
                                 Toast.makeText(activity, gson.toJson(imageModel.getProducts().get(0).getName()), Toast.LENGTH_LONG).show();
                                 BannerSlidePagerAdapter adapter = new BannerSlidePagerAdapter(activity, imageModel.getProducts());
                                 pager.setAdapter(adapter);
+                                indicator.setViewPager(pager);
                                 handler = new Handler();
                                 runnable(imageModel.getProducts().size());
                             }
